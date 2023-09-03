@@ -18,10 +18,10 @@ public class Movement : MonoBehaviour
     {
         if (activado)
         {
-            // Obtén la rotación de la cámara de la VR
+            // Aqui obtiene la rotación de la cámara de la VR
             Quaternion rotacionCamara = camaraVR.rotation;
 
-            // Obtén la dirección hacia la que mira la cámara de la VR desde su rotación
+            // Aqui obtiene la dirección hacia la que mira la cámara de la VR desde su rotación
             Vector3 direccionJugador = rotacionCamara * Vector3.forward;
 
             // Asegurarse de que la dirección no tenga componente Y

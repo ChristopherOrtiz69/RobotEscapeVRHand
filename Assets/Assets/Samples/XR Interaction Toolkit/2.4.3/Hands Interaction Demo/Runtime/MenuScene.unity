@@ -17799,6 +17799,7 @@ GameObject:
   - component: {fileID: 543450653205572749}
   - component: {fileID: 1088675199}
   - component: {fileID: 919132149556573752}
+  - component: {fileID: 919132149556573753}
   m_Layer: 0
   m_Name: naveVR
   m_TagString: Untagged
@@ -17819,6 +17820,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   velocidad: 1.5
+--- !u!114 &919132149556573753
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 919132149556573751}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 319b4aafc8245ab4e941e8d849c69c51, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  objetoARotar: {fileID: 543450653205572749}
+  velocidadRotacion: 20
+  anguloUmbral: 1
 --- !u!23 &971398063082490860
 MeshRenderer:
   m_ObjectHideFlags: 0
