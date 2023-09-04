@@ -5,7 +5,8 @@ using UnityEngine;
 public class Movement : MonoBehaviour
 {
     public float velocidad = 5.0f; // Velocidad de movimiento
-    private bool activado = false;
+    private bool avanzando = false;
+    private bool retrocediendo = false;
     private Transform camaraVR;
 
     void Start()
@@ -16,31 +17,63 @@ public class Movement : MonoBehaviour
 
     void Update()
     {
-        if (activado)
+        Vector3 direccionMovimiento = Vector3.zero;
+
+        if (avanzando)
         {
-            // Aqui obtiene la rotación de la cámara de la VR
-            Quaternion rotacionCamara = camaraVR.rotation;
+            direccionMovimiento = ObtenerDireccionCamara();
+        }
+        else if (retrocediendo)
+        {
+            direccionMovimiento = -ObtenerDireccionCamara();
+        }
 
-            // Aqui obtiene la dirección hacia la que mira la cámara de la VR desde su rotación
-            Vector3 direccionJugador = rotacionCamara * Vector3.forward;
+        // Mueve el objeto según la dirección de movimiento
+        transform.Translate(direccionMovimiento * velocidad * Time.deltaTime, Space.World);
+    }
 
-            // Asegurarse de que la dirección no tenga componente Y
-            direccionJugador.y = 0;
+    // Método para activar/desactivar el movimiento hacia adelante
+    public void ActivarDesactivarAvance()
+    {
+        avanzando = !avanzando;
 
-            // Normalizar la dirección y mover el objeto
-            transform.Translate(direccionJugador.normalized * velocidad * Time.deltaTime, Space.World);
+        if (!avanzando)
+        {
+            // Detener el movimiento cuando se desactiva el avance
+            // Puedes agregar aquí cualquier otra lógica de detención que necesites
+        }
+
+        // Si se activa avanzando, asegúrate de desactivar retrocediendo
+        if (avanzando)
+        {
+            retrocediendo = false;
         }
     }
 
-    // Método para activar/desactivar el objeto
-    public void ActivarDesactivar()
+    // Método para activar/desactivar el movimiento de retroceso
+    public void ActivarDesactivarRetroceso()
     {
-        activado = !activado;
+        retrocediendo = !retrocediendo;
 
-        if (!activado)
+        if (!retrocediendo)
         {
-            // Detener el movimiento cuando se desactiva
+            // Detener el movimiento cuando se desactiva retrocediendo
             // Puedes agregar aquí cualquier otra lógica de detención que necesites
         }
+
+        // Si se activa retrocediendo, asegúrate de desactivar avanzando
+        if (retrocediendo)
+        {
+            avanzando = false;
+        }
+    }
+
+    // Método para obtener la dirección hacia la que mira la cámara de la VR desde su rotación
+    private Vector3 ObtenerDireccionCamara()
+    {
+        Quaternion rotacionCamara = camaraVR.rotation;
+        Vector3 direccionJugador = rotacionCamara * Vector3.forward;
+        direccionJugador.y = 0;
+        return direccionJugador.normalized;
     }
 }
