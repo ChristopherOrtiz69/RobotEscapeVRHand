@@ -5,8 +5,8 @@ using UnityEngine;
 public class Movement : MonoBehaviour
 {
     public float velocidad = 5.0f; // Velocidad de movimiento
-    private bool avanzando = false;
-    private bool retrocediendo = false;
+    public  bool avanzando = false;
+    public bool retrocediendo = false;
     private Transform camaraVR;
 
     void Start()
@@ -27,6 +27,7 @@ public class Movement : MonoBehaviour
         {
             direccionMovimiento = -ObtenerDireccionCamara();
         }
+     
 
         // Mueve el objeto según la dirección de movimiento
         transform.Translate(direccionMovimiento * velocidad * Time.deltaTime, Space.World);
@@ -67,6 +68,30 @@ public class Movement : MonoBehaviour
             avanzando = false;
         }
     }
+
+
+    public void ActivarTurbo()// Metodo para activar/Desactivar el moverse mas rapido 
+    
+    {
+        GameObject.FindObjectOfType<Shooting>().MisilRelentizado();
+        avanzando = !avanzando;
+        if (!avanzando)
+        {
+            Debug.Log("mi velocidad es de 10");
+            velocidad = 10.0f;
+            // Detener el movimiento cuando se desactiva el avance
+            // Puedes agregar aquí cualquier otra lógica de detención que necesites
+        }
+        if (avanzando)
+        {
+            Debug.Log("mi velocidad es de 20");
+            velocidad = 20.0f;
+            retrocediendo = false;
+        }
+    }
+
+
+
 
     // Método para obtener la dirección hacia la que mira la cámara de la VR desde su rotación
     private Vector3 ObtenerDireccionCamara()

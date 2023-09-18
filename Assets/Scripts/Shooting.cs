@@ -9,11 +9,13 @@ public class Shooting : MonoBehaviour
     public Camera playerCamera; // Asigna la cámara del jugador desde el Inspector.
     public float shotForce = 10f; // Fuerza del disparo.
     public float shotCooldown = 1f; // Tiempo de espera entre disparos.
+    private Movement movement;
 
     private float shotTimer;
 
     private void Update()
     {
+        
         // Controla el tiempo entre disparos.
         shotTimer += Time.deltaTime;
 
@@ -54,6 +56,23 @@ public class Shooting : MonoBehaviour
         {
             // Destruye el objeto enemigo.
             Destroy(collision.gameObject);
+        }
+    }
+
+
+
+    public void MisilRelentizado()
+    {
+       
+        if (movement == true)
+        {
+            Debug.Log("Disparo esta en 1");
+            shotForce = 1f;
+        }
+        if (movement == false) 
+        {
+            Debug.Log("Disparo esta en 10");
+            shotForce = 80f;
         }
     }
 }
