@@ -8,6 +8,10 @@ public class LogicaEnemigos : MonoBehaviour
 
     private bool haCambiadoDeColor = false;
 
+    public float tiempoCambioColor = 1.0f; // Tiempo en segundos para que el renderer cambie de color 
+
+    private bool haCambiadoDeColorBlanco = false; 
+
     private void OnTriggerEnter(Collider other)
     {
         // Verifica si el objeto que entró en el trigger tiene el tag "misil".
@@ -21,6 +25,11 @@ public class LogicaEnemigos : MonoBehaviour
             {
                 renderer.material.color = Color.red;
             }
+            /*if(renderer != null)
+            {
+                
+                renderer.material.color =  Color.white;
+            }*/
 
             // Inicia el temporizador antes de la destrucción.
             Invoke("DestruirObjeto", tiempoDeVida);
