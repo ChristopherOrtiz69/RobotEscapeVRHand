@@ -34,15 +34,19 @@ public class Shooting : MonoBehaviour
 
         // Convierte la posición del arma en un rayo hacia la dirección de la cámara.
         Vector3 shotDirection = playerCamera.transform.forward;
+       
 
         // Crea una instancia del objeto projectilePrefab en el punto de origen del arma.
         GameObject projectile = Instantiate(projectilePrefab, weaponOriginPosition, Quaternion.identity);
+       
+
 
         // Agrega fuerza al objeto proyectil en la dirección de la cámara.
         Rigidbody rb = projectile.GetComponent<Rigidbody>();
         if (rb != null)
         {
             rb.AddForce(shotDirection * shotForce, ForceMode.Impulse);
+           
         }
 
         // Destruye el proyectil después de un tiempo para evitar que llenen la escena.
