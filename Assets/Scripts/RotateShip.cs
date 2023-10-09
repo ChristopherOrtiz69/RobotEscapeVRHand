@@ -1,36 +1,52 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.XR;
 
 public class RotateShip : MonoBehaviour
 {
-    public Transform objetoARotar; // Objeto que se va a rotar
-    public float velocidadRotacion = 45.0f; // Velocidad de rotación en grados por segundo
-    public float anguloUmbral = 30.0f; // Ángulo en grados para activar la rotación
+    public Transform objectToRotate; // Asigna el objeto que deseas rotar desde el Inspector.
+    public float viewAngle = 45f; // Ángulo de visión horizontal.
+    public float maxVerticalRotation = 45f; // Máximo ángulo de rotación hacia arriba.
+    public float minVerticalRotation = -45f; // Máximo ángulo de rotación hacia abajo.
+    public float noRotateRadius = 5f; // Radio del área donde no se aplica rotación.
 
-    void Update()
+    private Transform playerCamera; // Referencia a la cámara del jugador (cámara de VR).
+
+    private void Start()
     {
-        // Verifica si el objeto a rotar está asignado
-        if (objetoARotar != null)
+        // Obtén la cámara de VR (asegúrate de que esté configurada en tu escena).
+        playerCamera = Camera.main.transform;
+    }
+
+    private void Update()
+    {
+        // Obtiene la dirección de la cámara en VR.
+        Vector3 cameraForward = playerCamera.forward;
+
+        // Calcula el ángulo entre la dirección de la cámara y el objeto a rotar.
+        float angleToCamera = Vector3.Angle(objectToRotate.forward, cameraForward);
+
+        // Comprueba si el ángulo está dentro del rango de visión horizontal.
+        if (angleToCamera <= viewAngle)
         {
-            // Calcula el ángulo entre la dirección de la cámara y la dirección del objeto
-            Vector3 direccionCamara = Camera.main.transform.forward;
-            Vector3 direccionObjeto = (objetoARotar.position - Camera.main.transform.position).normalized;
-
-            // Calcula el ángulo entre las dos direcciones en el eje Y
-            float anguloY = Vector3.SignedAngle(direccionCamara, direccionObjeto, Vector3.up);
-
-            // Activa la rotación si el ángulo supera el umbral
-            if (Mathf.Abs(anguloY) > anguloUmbral)
+            // Comprueba si la distancia al objeto es mayor que el radio de no rotación.
+            float distanceToCamera = Vector3.Distance(objectToRotate.position, playerCamera.position);
+            if (distanceToCamera > noRotateRadius)
             {
-                // Invierte la dirección de rotación en función del ángulo calculado
-                float direccionRotacion = Mathf.Sign(anguloY);
+                // Calcula la rotación actual del objeto.
+                Quaternion currentRotation = objectToRotate.rotation;
 
-                // Calcula la rotación deseada en función del ángulo calculado y la dirección de rotación
-                Quaternion rotacionDeseada = Quaternion.Euler(0, direccionRotacion * anguloUmbral, 0);
+                // Calcula la rotación deseada hacia la dirección de la cámara.
+                Quaternion targetRotation = Quaternion.LookRotation(cameraForward);
 
-                // Aplica la rotación al objeto
-                objetoARotar.rotation = Quaternion.RotateTowards(objetoARotar.rotation, rotacionDeseada, velocidadRotacion * Time.deltaTime);
+                // Limita la rotación vertical.
+                float verticalRotation = targetRotation.eulerAngles.x;
+                verticalRotation = Mathf.Clamp(verticalRotation, minVerticalRotation, maxVerticalRotation);
+                targetRotation = Quaternion.Euler(verticalRotation, targetRotation.eulerAngles.y, targetRotation.eulerAngles.z);
+
+                // Aplica la rotación gradualmente.
+                objectToRotate.rotation = Quaternion.Slerp(currentRotation, targetRotation, Time.deltaTime);
             }
         }
     }

@@ -11,6 +11,7 @@ public class Shooting : MonoBehaviour
     public float shotForce = 10f; // Fuerza del disparo.
     public float shotCooldown = 1f; // Tiempo de espera entre disparos.
     private Movement movement;
+    public LayerMask collisionLayer;
 
     private float shotTimer;
 
@@ -54,17 +55,30 @@ public class Shooting : MonoBehaviour
         Destroy(projectile, 5f);
     }
 
-    private void OnCollisionEnter(Collision collision)
+    private void OnTriggerEnter(Collider other)
     {
+        Debug.Log("Detecte collision");
+        Rigidbody rb = GetComponent<Rigidbody>();
+        
         // Verifica si la colisión involucra un objeto con el tag "enemy".
-        if (collision.gameObject.CompareTag("enemy"))
-        {
-            // Destruye el objeto enemigo.
-            Destroy(collision.gameObject);
+        if (other.CompareTag("enemy"))
+        {    
+                Debug.Log("Pse a 0");
+                rb.velocity = Vector3.zero;
+                rb.angularVelocity = Vector3.zero;
+                    
         }
+       
+        if (other.gameObject.layer == collisionLayer)
+            Debug.Log("Detecte collision layer ");
+        {
+                Debug.Log("Pse a 0 con gorund ");
+                rb.velocity = Vector3.zero;
+                rb.angularVelocity = Vector3.zero;
+                  
+        }
+       
     }
-
-
     public void MisilRelentizado()
     {
 

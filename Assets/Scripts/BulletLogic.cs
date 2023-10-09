@@ -21,6 +21,8 @@ public class BulletLogic : MonoBehaviour
                 visualEffect.Play(); // Activar el efecto visual
             }
 
+
+
             // Aquí puedes agregar cualquier otra lógica que desees cuando el misil colisiona con un enemigo o el suelo.
             // Por ejemplo, puedes destruir el objeto enemigo o realizar otros eventos relacionados con el juego.
         }
