@@ -4,12 +4,11 @@ using UnityEngine;
 
 public class Shooting : MonoBehaviour
 {
-
-    public GameObject projectilePrefab; // Asigna el objeto a disparar desde el Inspector.
-    public Transform weaponOrigin; // Asigna el punto de origen del arma desde el Inspector.
-    public Camera playerCamera; // Asigna la cámara del jugador desde el Inspector.
-    public float shotForce = 10f; // Fuerza del disparo.
-    public float shotCooldown = 1f; // Tiempo de espera entre disparos.
+    public GameObject projectilePrefab;
+    public Transform weaponOrigin;
+    public Camera playerCamera;
+    public float shotForce = 10f;
+    public float shotCooldown = 1f;
     private Movement movement;
     public LayerMask collisionLayer;
 
@@ -17,11 +16,8 @@ public class Shooting : MonoBehaviour
 
     private void Update()
     {
-
-        // Controla el tiempo entre disparos.
         shotTimer += Time.deltaTime;
 
-        // Disparar cuando se presiona un botón físico en la escena.
         if (Input.GetButtonDown("Fire1") && shotTimer >= shotCooldown)
         {
             Shoot();
@@ -29,57 +25,75 @@ public class Shooting : MonoBehaviour
         }
     }
 
-    private void Shoot()
+    public void Shoot()
     {
-        // Obtiene la posición del arma como el punto de origen.
         Vector3 weaponOriginPosition = weaponOrigin.position;
-
-        // Convierte la posición del arma en un rayo hacia la dirección de la cámara.
         Vector3 shotDirection = playerCamera.transform.forward;
 
-
-        // Crea una instancia del objeto projectilePrefab en el punto de origen del arma.
         GameObject projectile = Instantiate(projectilePrefab, weaponOriginPosition, Quaternion.identity);
 
+        // Calcula la rotación para hacer que el proyectil apunte en la dirección correcta.
+        Quaternion rotation = Quaternion.LookRotation(shotDirection);
 
+        // Aplica la rotación al proyectil.
+        projectile.transform.rotation = rotation;
 
-        // Agrega fuerza al objeto proyectil en la dirección de la cámara.
         Rigidbody rb = projectile.GetComponent<Rigidbody>();
         if (rb != null)
         {
             rb.AddForce(shotDirection * shotForce, ForceMode.Impulse);
-
         }
-
-        // Destruye el proyectil después de un tiempo para evitar que llenen la escena.
-        Destroy(projectile, 5f);
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("Detecte collision");
         Rigidbody rb = GetComponent<Rigidbody>();
-        
-        // Verifica si la colisión involucra un objeto con el tag "enemy".
         if (other.CompareTag("enemy"))
-        {    
-                Debug.Log("Pse a 0");
-                rb.velocity = Vector3.zero;
-                rb.angularVelocity = Vector3.zero;
-                    
-        }
-       
-        if (other.gameObject.layer == collisionLayer)
-            Debug.Log("Detecte collision layer ");
         {
-                Debug.Log("Pse a 0 con gorund ");
+            Debug.Log("Colisión con objeto con el tag 'enemy'");
+            rb.velocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+
+            // Desactiva el mesh del proyectil después de medio segundo.
+            MeshRenderer meshRenderer = GetComponent<MeshRenderer>();
+            if (meshRenderer != null)
+            {
+                StartCoroutine(DeactivateMesh(meshRenderer, 0.2f));
+            }
+
+            // Destruye el objeto después de medio segundo.
+            Destroy(gameObject, 0.5f);
+        }
+
+        if (other.gameObject.layer == collisionLayer)
+        {
+            Debug.Log("Detecté colisión en la capa");
+
+            // Desactiva el mesh del proyectil después de medio segundo.
+            MeshRenderer meshRenderer = GetComponent<MeshRenderer>();
+            if (meshRenderer != null)
+            {
                 rb.velocity = Vector3.zero;
                 rb.angularVelocity = Vector3.zero;
-                  
+                StartCoroutine(DeactivateMesh(meshRenderer, 0.2f));
+            }
+
+            // Destruye el objeto después de medio segundo.
+            Destroy(gameObject, 0.8f);
         }
-       
     }
-    public void MisilRelentizado()
+
+    private IEnumerator DeactivateMesh(MeshRenderer meshRenderer, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
+        if (meshRenderer != null)
+        {
+            meshRenderer.enabled = false;
+        }
+    }
+
+public void MisilRelentizado()
     {
 
         if (movement == true)
