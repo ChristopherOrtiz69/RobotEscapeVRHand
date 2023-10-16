@@ -10,7 +10,9 @@ using UnityEngine;
         [SerializeField] private Target _newTarget; // Nuevo objetivo
         [SerializeField] private GameObject _explosionPrefab;
 
-        [Header("MOVEMENT")]
+    private GameObject explosionInstance;
+
+    [Header("MOVEMENT")]
         [SerializeField] private float _speed = 15;
         [SerializeField] private float _rotateSpeed = 95;
 
@@ -70,15 +72,22 @@ using UnityEngine;
             _rb.MoveRotation(Quaternion.RotateTowards(transform.rotation, rotation, _rotateSpeed * Time.deltaTime));
         }
 
-        private void OnCollisionEnter(Collision collision)
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (_explosionPrefab)
         {
-            if (_explosionPrefab) Instantiate(_explosionPrefab, transform.position, Quaternion.identity);
-            if (collision.transform.TryGetComponent<IExplode>(out var ex)) ex.Explode();
+            explosionInstance = Instantiate(_explosionPrefab, transform.position, Quaternion.identity);
 
-            Destroy(gameObject);
+            // Destruye la instancia de la explosión después de un cierto tiempo (por ejemplo, 2 segundos)
+            Destroy(explosionInstance, 2f);
         }
 
-        private void OnDrawGizmos()
+        if (collision.transform.TryGetComponent<IExplode>(out var ex)) ex.Explode();
+
+        Destroy(gameObject);
+    }
+
+    private void OnDrawGizmos()
         {
             Gizmos.color = Color.red;
             Gizmos.DrawLine(transform.position, _standardPrediction);
