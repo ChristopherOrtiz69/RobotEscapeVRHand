@@ -43,6 +43,7 @@ public class Shooting : MonoBehaviour
         {
             rb.AddForce(shotDirection * shotForce, ForceMode.Impulse);
         }
+        Destroy(gameObject, 1f);
     }
 
     private void OnTriggerEnter(Collider other)

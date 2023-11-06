@@ -8,9 +8,10 @@ public class Seek : MonoBehaviour
     public float speed = 5.0f;
     public float rotationSpeed = 5.0f;
     public float stoppingDistance = 1.0f;
-    public float avoidanceDistance = 2.0f; // Distancia para evitar objetos con el tag "enemy"
-    public float sideRayLength = 1.0f;    // Longitud del raycast hacia los lados
-    public float sideRayOffset = 0.5f;    // Offset desde el centro del objeto hacia los lados
+    public float avoidanceDistance = 2.0f;
+    public float sideRayLength = 1.0f;
+    public float sideRayOffset = 0.5f;
+    public float maxFollowDistance = 10.0f; // Nueva variable para la distancia máxima de seguimiento
 
     private void Update()
     {
@@ -23,14 +24,20 @@ public class Seek : MonoBehaviour
         // Calcula la dirección hacia el objetivo
         Vector3 direction = (target.position - transform.position).normalized;
 
+        // Calcula la distancia al objetivo
+        float distance = Vector3.Distance(transform.position, target.position);
+
+        // Verifica si la distancia supera la distancia máxima de seguimiento
+        if (distance > maxFollowDistance)
+        {
+            return; // Si la distancia es mayor que la distancia máxima, deja de seguir al objetivo
+        }
+
         // Calcula la rotación hacia la dirección del objetivo
         Quaternion targetRotation = Quaternion.LookRotation(direction);
 
         // Aplica la rotación gradualmente
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
-
-        // Calcula la distancia al objetivo
-        float distance = Vector3.Distance(transform.position, target.position);
 
         // Si estamos lo suficientemente cerca del objetivo, reduce la velocidad para la llegada suave
         if (distance <= stoppingDistance)
@@ -42,9 +49,7 @@ public class Seek : MonoBehaviour
         {
             // Si estamos lejos del objetivo, aplica velocidad máxima
             transform.position += transform.forward * speed * Time.deltaTime;
-        }
-
-        // Raycast hacia adelante para evitar objetos con el tag "enemy"
+        }        // Raycast hacia adelante para evitar objetos con el tag "enemy"
         RaycastHit hit;
         if (Physics.Raycast(transform.position, transform.forward, out hit, avoidanceDistance) && hit.collider.CompareTag("enemy"))
         {

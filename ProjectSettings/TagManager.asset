@@ -6,6 +6,8 @@ TagManager:
   tags:
   - enemy
   - misil
+  - Target
+  - obstacle
   layers:
   - Default
   - TransparentFX
