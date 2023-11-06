@@ -311,7 +311,7 @@
                 var meshDestroy = GameObject.AddComponent<MeshDestroy>();
                 meshDestroy.CutCascades = original.CutCascades;
                 meshDestroy.ExplodeForce = original.ExplodeForce;
-            Destroy(GameObject, 1.0f);
+            Destroy(GameObject, 1.7f);
 
         }
 
