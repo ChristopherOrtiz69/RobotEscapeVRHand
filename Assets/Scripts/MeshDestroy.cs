@@ -12,30 +12,31 @@
         public int CutCascades = 1;
         public float ExplodeForce = 0;
     private bool hasBeenDestroyed = false;
-   
+    private BoxCollider boxCollider;
 
-    // Start is called before the first frame update
+    private static List<GameObject> destroyedObjects = new List<GameObject>();
+
+
     void Start()
-        {
-       
-        }
+    {
+        // Inicializa la variable de control en falso al comienzo.
+        hasBeenDestroyed = false;
+        // Obtiene la referencia al componente BoxCollider.
+        boxCollider = GetComponent<BoxCollider>();
+    }
 
-        // Update is called once per frame
-        void Update()
+    // Update is called once per frame
+    void Update()
         {
-            /*if (Input.GetMouseButtonDown(0))
-            {
-                DestroyMesh();
-            }*/
+         
         }
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("misil") && !hasBeenDestroyed)
+        if (!hasBeenDestroyed && other.CompareTag("misil"))
         {
             DestroyMesh();
         }
     }
-
 
     private void DestroyMesh()
         {
@@ -43,11 +44,13 @@
             originalMesh.RecalculateBounds();
             var parts = new List<PartMesh>();
             var subParts = new List<PartMesh>();
+
         if (hasBeenDestroyed)
         {
             return; // La destrucción ya ha ocurrido, no hacer nada más.
         }
-        
+
+
 
         var mainPart = new PartMesh()
             {
@@ -86,9 +89,17 @@
                 parts[i].MakeGameobject(this);
                 parts[i].GameObject.GetComponent<Rigidbody>().AddForceAtPosition(parts[i].Bounds.center * ExplodeForce, transform.position);
             }
+        hasBeenDestroyed = true; // Marca el objeto como destruido.
+        MeshCollider meshCollider = GetComponent<MeshCollider>();
+        if (meshCollider != null)
+        {
+            meshCollider.enabled = false;
+        }
+
+        enabled = false;
+     
+        Destroy(gameObject);
             
-            Destroy(gameObject);
-            hasBeenDestroyed = true;
     }
 
         private PartMesh GenerateMesh(PartMesh original, Plane plane, bool left)
@@ -289,7 +300,7 @@
                 GameObject.transform.localScale = original.transform.localScale;
 
                 var mesh = new Mesh();
-                mesh.name = original.GetComponent<MeshFilter>().mesh.name;
+                //mesh.name = original.GetComponent<MeshFilter>().mesh.name;
 
                 mesh.vertices = Vertices;
                 mesh.normals = Normals;

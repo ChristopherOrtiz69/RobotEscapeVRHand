@@ -70,25 +70,7 @@ public class Movement : MonoBehaviour
     }
 
 
-    public void ActivarTurbo()// Metodo para activar/Desactivar el moverse mas rapido 
-    
-    {
-        GameObject.FindObjectOfType<Shooting>().MisilRelentizado();
-        avanzando = !avanzando;
-        if (!avanzando)
-        {
-            Debug.Log("mi velocidad es de 10");
-            velocidad = 10.0f;
-            // Detener el movimiento cuando se desactiva el avance
-            // Puedes agregar aquí cualquier otra lógica de detención que necesites
-        }
-        if (avanzando)
-        {
-            Debug.Log("mi velocidad es de 20");
-            velocidad = 20.0f;
-            retrocediendo = false;
-        }
-    }
+  
 
 
 

@@ -43,15 +43,23 @@ public class Shooting : MonoBehaviour
         {
             rb.AddForce(shotDirection * shotForce, ForceMode.Impulse);
         }
-       // Destroy(gameObject, 1f);
+
+        // Invoca una función que destruirá el objeto disparado después de 5 segundos.
+        StartCoroutine(DestroyProjectileAfterDelay(projectile, 5f));
     }
+
+    private IEnumerator DestroyProjectileAfterDelay(GameObject projectile, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        Destroy(projectile);
+    }
+
 
     private void OnTriggerEnter(Collider other)
     {
         Rigidbody rb = GetComponent<Rigidbody>();
         if (other.CompareTag("enemy"))
-        {
-            Debug.Log("Colisión con objeto con el tag 'enemy'");
+        {        
             rb.velocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
 
@@ -61,15 +69,11 @@ public class Shooting : MonoBehaviour
             {
                 StartCoroutine(DeactivateMesh(meshRenderer, 0.2f));
             }
-
-            // Destruye el objeto después de medio segundo.
             Destroy(gameObject, 0.5f);
         }
 
         if (other.gameObject.layer == collisionLayer)
         {
-            Debug.Log("Detecté colisión en la capa");
-
             // Desactiva el mesh del proyectil después de medio segundo.
             MeshRenderer meshRenderer = GetComponent<MeshRenderer>();
             if (meshRenderer != null)
@@ -78,12 +82,9 @@ public class Shooting : MonoBehaviour
                 rb.angularVelocity = Vector3.zero;
                 StartCoroutine(DeactivateMesh(meshRenderer, 0.2f));
             }
-
-            // Destruye el objeto después de medio segundo.
-            Destroy(gameObject, 0.8f);
+            Destroy(gameObject, 0.5f);
         }
     }
-
     private IEnumerator DeactivateMesh(MeshRenderer meshRenderer, float delay)
     {
         yield return new WaitForSeconds(delay);
@@ -94,20 +95,6 @@ public class Shooting : MonoBehaviour
         }
     }
 
-public void MisilRelentizado()
-    {
-
-        if (movement == true)
-        {
-            Debug.Log("Disparo esta en 1");
-            shotForce = 1f;
-        }
-        if (movement == false)
-        {
-            Debug.Log("Disparo esta en 10");
-            shotForce = 80f;
-        }
-    }
 }
 
 
