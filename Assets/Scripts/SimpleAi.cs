@@ -4,8 +4,10 @@ using UnityEngine.AI;
 public class SimpleAi: MonoBehaviour
 {
     public Transform target; // El objetivo a seguir
-    public float followRadius = 5f; // Radio en el cual comenzará a seguir al objetivo
-    public float patrolStoppingDistance = 0.5f; // Distancia de parada durante el patrullaje
+    public float followRadius = 5f;
+    public float followRadiusContra = 5f; // Radio en el cual comenzará a seguir al objetivo
+    public float patrolStoppingDistance = 0.5f;
+    public float StoppingDistance = 0.5f;// Distancia de parada durante el patrullaje
     public Transform[] patrolPoints; // Puntos de patrullaje
     private NavMeshAgent navMeshAgent;
     private bool isFollowing = false;
@@ -37,7 +39,14 @@ public class SimpleAi: MonoBehaviour
             isFollowing = true;
             navMeshAgent.SetDestination(target.position);
         }
-
+       if (isFollowing)
+        {
+            if (distanceToTarget > StoppingDistance)
+            {
+                isFollowing = true;
+                
+            }
+        }
         // Si está siguiendo, actualiza continuamente el destino
         if (isFollowing)
         {
@@ -49,6 +58,12 @@ public class SimpleAi: MonoBehaviour
                 isFollowing = false;
                 SetNextPatrolDestination();
             }
+            if (distanceToTarget < followRadiusContra)
+            {
+                isFollowing = false;
+               
+            }
+
         }
         else
         {

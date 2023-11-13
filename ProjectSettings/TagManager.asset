@@ -8,6 +8,7 @@ TagManager:
   - misil
   - Target
   - obstacle
+  - bullet
   layers:
   - Default
   - TransparentFX

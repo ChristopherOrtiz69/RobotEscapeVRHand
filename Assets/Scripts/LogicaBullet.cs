@@ -1,17 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-public class LogicaEnemigos : MonoBehaviour
+using UnityEngine.VFX;
+public class LogicaBullet : MonoBehaviour
 {
     public float tiempoDeVida = 3.0f; // Tiempo en segundos antes de la destrucción.
     private bool haCambiadoDeColor = false;
     public float tiempoCambioColor = 1.0f; // Tiempo en segundos para que el renderer cambie de color 
-    private bool haCambiadoDeColorBlanco = false; 
+    private bool haCambiadoDeColorBlanco = false;
     private void OnTriggerEnter(Collider other)
     {
         // Verifica si el objeto que entró en el trigger tiene el tag "misil".
-        if (other.CompareTag("misil" ) && !haCambiadoDeColor)
+        if (other.CompareTag("bullet") && !haCambiadoDeColor)
         {
             haCambiadoDeColor = true;
 
@@ -25,7 +25,7 @@ public class LogicaEnemigos : MonoBehaviour
             Invoke("DestruirObjeto", tiempoDeVida);
         }
     }
-    
+
     private void DestruirObjeto()
     {
         // Destruye el objeto después de tiempoDeVida segundos.
