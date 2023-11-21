@@ -84,6 +84,16 @@ using UnityEngine;
 
         if (collision.transform.TryGetComponent<IExplode>(out var ex)) ex.Explode();
 
+        if (collision.gameObject.CompareTag("Shield"))
+        {
+            explosionInstance = Instantiate(_explosionPrefab, transform.position, Quaternion.identity);
+
+            // Destruye la instancia de la explosión después de un cierto tiempo (por ejemplo, 2 segundos)
+            Destroy(explosionInstance, 2f);
+            Debug.Log("Colisionó con un objeto con el tag 'Shield'");
+        }
+
+
         Destroy(gameObject);
     }
 

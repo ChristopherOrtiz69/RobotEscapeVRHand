@@ -8,12 +8,16 @@ public class ShootBullet : MonoBehaviour
     public Transform bulletSpawnPoint;
     public float bulletSpeed = 10f;
     private bool isShooting = false;
-    private Animator animator; // Agregamos una referencia al Animator
+    private Animator animator;
+    private AudioSource shootingAudio; // Agrega una referencia al AudioSource
+    public AudioClip shootingSound; // Asigna un AudioClip desde el Inspector
 
     void Start()
     {
-        // Obtener la referencia al Animator al inicio
+        // Obtener las referencias al Animator y AudioSource al inicio
         animator = GetComponent<Animator>();
+        shootingAudio = GetComponent<AudioSource>();
+        shootingAudio.clip = shootingSound; // Asigna el AudioClip al AudioSource
     }
 
     // Llamada cuando se presiona el botón en la escena para iniciar el disparo automático
@@ -22,23 +26,25 @@ public class ShootBullet : MonoBehaviour
         StartShooting();
     }
 
-    
-
     public void StartShooting()
     {
+        if (!isShooting)
         {
-            if (!isShooting)
+            isShooting = true;
+
+            // Iniciar la animación
+            if (animator != null)
             {
-                isShooting = true;
-
-                // Iniciar la animación
-                if (animator != null)
-                {
-                    animator.SetBool("Shoot", false);
-                }
-
-                StartCoroutine(ShootContinuously());
+                animator.SetBool("Shoot", false);
             }
+
+            // Reproducir el sonido de disparo
+            if (shootingAudio != null)
+            {
+                shootingAudio.Play();
+            }
+
+            StartCoroutine(ShootContinuously());
         }
     }
 
@@ -51,14 +57,19 @@ public class ShootBullet : MonoBehaviour
             // Detener la animación
             if (animator != null)
             {
-                animator.SetBool("Shoot", true );
+                animator.SetBool("Shoot", true);
+            }
+
+            // Detener el sonido de disparo
+            if (shootingAudio != null)
+            {
+                shootingAudio.Stop();
             }
 
             StopCoroutine(ShootContinuously());
         }
     }
-
-    private IEnumerator ShootContinuously()
+private IEnumerator ShootContinuously()
     {
         while (isShooting)
         {

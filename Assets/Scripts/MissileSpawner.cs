@@ -1,16 +1,15 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-
-
-    public class MissileSpawner : MonoBehaviour
+public class MissileSpawner : MonoBehaviour
 {
     public GameObject missilePrefab; // Asigna la copia del Prefab del misil en el Inspector
-    public Transform spawnPoint;  // El punto donde aparecerán los misiles
+    public Transform spawnPoint; // El punto donde aparecerán los misiles
+    public float playerDetectionRadius = 10f; // Radio de detección del jugador
+    public string playerTag = "Player"; // Tag del jugador
 
-    private float minSpawnInterval = 4f; // Tiempo mínimo de spawn (en segundos)
-    private float maxSpawnInterval = 15f; // Tiempo máximo de spawn (en segundos)
+    private float minSpawnInterval = 1f; // Tiempo mínimo de spawn (en segundos)
+    private float maxSpawnInterval = 5f; // Tiempo máximo de spawn (en segundos)
 
     private void Start()
     {
@@ -22,6 +21,9 @@ using UnityEngine;
     {
         while (true)
         {
+            // Espera durante el tiempo calculado antes de instanciar el misil
+            yield return new WaitUntil(() => IsPlayerInRadius());
+
             // Calcula un tiempo de espera aleatorio entre minSpawnInterval y maxSpawnInterval
             float spawnInterval = Random.Range(minSpawnInterval, maxSpawnInterval);
 
@@ -42,5 +44,27 @@ using UnityEngine;
     {
         yield return new WaitForSeconds(delay);
         missile.SetActive(true); // Activa el objeto después del tiempo de espera
+    }
+
+    private bool IsPlayerInRadius()
+    {
+        Collider[] colliders = Physics.OverlapSphere(transform.position, playerDetectionRadius);
+
+        foreach (var collider in colliders)
+        {
+            if (collider.CompareTag(playerTag))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private void OnDrawGizmos()
+    {
+        // Dibuja el radio de detección del jugador
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, playerDetectionRadius);
     }
 }

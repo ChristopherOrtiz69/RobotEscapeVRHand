@@ -5,24 +5,35 @@ using UnityEngine.VFX;
 
 public class BulletLogic : MonoBehaviour
 {
-    public string enemyTag = "enemy"; // Etiqueta de los objetos enemigos
-    public VisualEffect visualEffect; // Asigna el VFXGraph directamente en el inspector
-    public LayerMask groundLayer; // Capa para el suelo
+    public string enemyTag = "enemy";
+    public VisualEffect visualEffect;
+    public LayerMask groundLayer;
+    private AudioSource ExplodeAudio; // Agrega una referencia al AudioSource
+    public AudioClip ExplodeSound; //
+
+    // No necesitas el método Start para configurar el AudioSource
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag(enemyTag) || (groundLayer.value & (1 << other.gameObject.layer)) != 0)
         {
-            // Verificar si el objeto colisionado tiene la etiqueta "enemy"
-            // o está en la capa "WhatIsGround"
-            // Si es así, activar el efecto visual
             if (visualEffect != null)
             {
-                visualEffect.Play(); // Activar el efecto visual
+                visualEffect.Play();
             }
-            Destroy(gameObject, 0.5f);
-            // Aquí puedes agregar cualquier otra lógica que desees cuando el misil colisiona con un enemigo o el suelo.
-            // Por ejemplo, puedes destruir el objeto enemigo o realizar otros eventos relacionados con el juego.
+
+            // Configura el AudioSource y reproduce el sonido
+            if (ExplodeAudio == null)
+            {
+                ExplodeAudio = gameObject.AddComponent<AudioSource>();
+                ExplodeAudio.clip = ExplodeSound;
+                ExplodeAudio.volume = 0.3f;
+            }
+
+            ExplodeAudio.Play();
+
+            Destroy(gameObject, 0.9f);
+            // Puedes agregar aquí cualquier otra lógica que desees cuando el misil colisiona con un enemigo o el suelo.
         }
     }
 }

@@ -9,6 +9,9 @@ TagManager:
   - Target
   - obstacle
   - bullet
+  - Shield
+  - Wall
+  - IAMissile
   layers:
   - Default
   - TransparentFX

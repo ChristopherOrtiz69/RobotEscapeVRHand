@@ -4,15 +4,19 @@ using UnityEngine;
 
 public class Movement : MonoBehaviour
 {
-    public float velocidad = 5.0f; // Velocidad de movimiento
-    public  bool avanzando = false;
+    public float velocidad = 5.0f;
+    public bool avanzando = false;
     public bool retrocediendo = false;
     private Transform camaraVR;
+    public AudioClip avanceSound; // Asigna un AudioClip desde el Inspector
+    public AudioClip retrocesoSound; // Asigna un AudioClip desde el Inspector
+
+    private AudioSource audioSource;
 
     void Start()
     {
-        // Encuentra la cámara de la VR (asegúrate de que la cámara de la VR esté etiquetada como "MainCamera")
         camaraVR = Camera.main.transform;
+        audioSource = GetComponent<AudioSource>();
     }
 
     void Update()
@@ -27,55 +31,66 @@ public class Movement : MonoBehaviour
         {
             direccionMovimiento = -ObtenerDireccionCamara();
         }
-     
 
-        // Mueve el objeto según la dirección de movimiento
         transform.Translate(direccionMovimiento * velocidad * Time.deltaTime, Space.World);
     }
 
-    // Método para activar/desactivar el movimiento hacia adelante
     public void ActivarDesactivarAvance()
     {
+        
         avanzando = !avanzando;
-
         if (!avanzando)
         {
-            // Detener el movimiento cuando se desactiva el avance
-            // Puedes agregar aquí cualquier otra lógica de detención que necesites
+            DetenerMovimiento(); 
+            DetenerSonido();
         }
-
-        // Si se activa avanzando, asegúrate de desactivar retrocediendo
         if (avanzando)
         {
             retrocediendo = false;
+            ReproducirSonido(avanceSound);
         }
     }
 
-    // Método para activar/desactivar el movimiento de retroceso
+
     public void ActivarDesactivarRetroceso()
     {
         retrocediendo = !retrocediendo;
 
         if (!retrocediendo)
         {
-            // Detener el movimiento cuando se desactiva retrocediendo
-            // Puedes agregar aquí cualquier otra lógica de detención que necesites
+            DetenerMovimiento(); // Puedes personalizar esta función para detener el movimiento como desees.
+            DetenerSonido();
         }
+       
 
-        // Si se activa retrocediendo, asegúrate de desactivar avanzando
         if (retrocediendo)
         {
             avanzando = false;
+            ReproducirSonido(retrocesoSound);
         }
     }
 
+    private void DetenerMovimiento()
+    {
+        // Lógica para detener el movimiento (puedes personalizar según tus necesidades).
+    }
 
-  
+    private void ReproducirSonido(AudioClip sound)
+    {
+        if (audioSource != null && sound != null)
+        {
+            audioSource.clip = sound;
+            audioSource.Play();
+        }
+    }
+    private void DetenerSonido()
+    {
+        if (audioSource != null)
+        {
+            audioSource.Stop();
+        }
+    }
 
-
-
-
-    // Método para obtener la dirección hacia la que mira la cámara de la VR desde su rotación
     private Vector3 ObtenerDireccionCamara()
     {
         Quaternion rotacionCamara = camaraVR.rotation;

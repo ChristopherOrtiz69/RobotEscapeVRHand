@@ -8,21 +8,27 @@ public class Shooting : MonoBehaviour
     public Transform weaponOrigin;
     public Camera playerCamera;
     public float shotForce = 10f;
-    public float shotCooldown = 1f;
+    public float maxShotCooldown = 2f;
     private Movement movement;
     public LayerMask collisionLayer;
+    private AudioSource shootingAudio; // Agrega una referencia al AudioSource
+    public AudioClip shootingSound; //
+
+
 
     private float shotTimer;
+    void Start()
+    {
+        shootingAudio = gameObject.AddComponent<AudioSource>();
+        shootingAudio.clip = shootingSound;
+        shootingAudio.volume = 0.05f;
+    }
 
     private void Update()
     {
         shotTimer += Time.deltaTime;
 
-        if (Input.GetButtonDown("Fire1") && shotTimer >= shotCooldown)
-        {
-            Shoot();
-            shotTimer = 0f;
-        }
+      
     }
 
     public void Shoot()
@@ -37,6 +43,12 @@ public class Shooting : MonoBehaviour
 
         // Aplica la rotación al proyectil.
         projectile.transform.rotation = rotation;
+        AudioSource audioSource = projectile.AddComponent<AudioSource>();
+        if (shootingAudio != null)
+        {
+            shootingAudio.Play();
+        }
+
 
         Rigidbody rb = projectile.GetComponent<Rigidbody>();
         if (rb != null)

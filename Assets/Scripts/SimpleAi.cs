@@ -1,13 +1,12 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-public class SimpleAi: MonoBehaviour
+public class SimpleAi : MonoBehaviour
 {
     public Transform target; // El objetivo a seguir
     public float followRadius = 5f;
     public float followRadiusContra = 5f; // Radio en el cual comenzará a seguir al objetivo
     public float patrolStoppingDistance = 0.5f;
-    public float StoppingDistance = 0.5f;// Distancia de parada durante el patrullaje
     public Transform[] patrolPoints; // Puntos de patrullaje
     private NavMeshAgent navMeshAgent;
     private bool isFollowing = false;
@@ -39,40 +38,32 @@ public class SimpleAi: MonoBehaviour
             isFollowing = true;
             navMeshAgent.SetDestination(target.position);
         }
-       if (isFollowing)
-        {
-            if (distanceToTarget > StoppingDistance)
-            {
-                isFollowing = true;
-                
-            }
-        }
-        // Si está siguiendo, actualiza continuamente el destino
-        if (isFollowing)
-        {
-            navMeshAgent.SetDestination(target.position);
 
-            // Deja de seguir si el objetivo está fuera del radio
-            if (distanceToTarget > followRadius)
-            {
-                isFollowing = false;
-                SetNextPatrolDestination();
-            }
-            if (distanceToTarget < followRadiusContra)
-            {
-                isFollowing = false;
-               
-            }
-
-        }
-        else
+        // Si está siguiendo y el jugador está dentro del radio de contra seguimiento, detiene la IA y la mira
+        if (isFollowing && distanceToTarget <= followRadiusContra)
         {
-            // Si no está siguiendo, realiza patrullaje
-            if (navMeshAgent.remainingDistance < patrolStoppingDistance)
-            {
-                SetNextPatrolDestination();
-            }
+            StopFollowing();
+            RotateTowardsTarget();
         }
+
+        // Deja de seguir si el objetivo está fuera del radio de seguimiento
+        if (isFollowing && distanceToTarget > followRadius)
+        {
+            isFollowing = false;
+            SetNextPatrolDestination();
+        }
+
+        // Si no está siguiendo, realiza patrullaje
+        if (!isFollowing && navMeshAgent.remainingDistance < patrolStoppingDistance)
+        {
+            SetNextPatrolDestination();
+        }
+    }
+
+    void StopFollowing()
+    {
+        // Detiene la IA
+        navMeshAgent.ResetPath();
     }
 
     void SetNextPatrolDestination()
@@ -82,5 +73,22 @@ public class SimpleAi: MonoBehaviour
 
         // Avanza al siguiente punto de patrullaje
         currentPatrolIndex = (currentPatrolIndex + 1) % patrolPoints.Length;
+    }
+
+    void RotateTowardsTarget()
+    {
+        // Gira la IA hacia el jugador
+        Vector3 directionToTarget = (target.position - transform.position).normalized;
+        Quaternion lookRotation = Quaternion.LookRotation(new Vector3(directionToTarget.x, 0, directionToTarget.z));
+        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * navMeshAgent.angularSpeed);
+    }
+
+    private void OnDrawGizmos()
+    {
+        // Dibuja el radio de detección del jugador y el radio de contra seguimiento
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.position, followRadius);
+        Gizmos.color = Color.white;
+        Gizmos.DrawWireSphere(transform.position, followRadiusContra);
     }
 }
