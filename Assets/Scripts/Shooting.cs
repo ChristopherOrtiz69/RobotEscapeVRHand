@@ -28,36 +28,45 @@ public class Shooting : MonoBehaviour
     {
         shotTimer += Time.deltaTime;
 
-      
+       
     }
+
 
     public void Shoot()
     {
-        Vector3 weaponOriginPosition = weaponOrigin.position;
-        Vector3 shotDirection = playerCamera.transform.forward;
-
-        GameObject projectile = Instantiate(projectilePrefab, weaponOriginPosition, Quaternion.identity);
-
-        // Calcula la rotación para hacer que el proyectil apunte en la dirección correcta.
-        Quaternion rotation = Quaternion.LookRotation(shotDirection);
-
-        // Aplica la rotación al proyectil.
-        projectile.transform.rotation = rotation;
-        AudioSource audioSource = projectile.AddComponent<AudioSource>();
-        if (shootingAudio != null)
+        // Verifica si el cooldown ha pasado
+        if (shotTimer >= maxShotCooldown)
         {
-            shootingAudio.Play();
+            // Resetea el temporizador
+            shotTimer = 0f;
+
+            Vector3 weaponOriginPosition = weaponOrigin.position;
+            Vector3 shotDirection = playerCamera.transform.forward;
+
+            GameObject projectile = Instantiate(projectilePrefab, weaponOriginPosition, Quaternion.identity);
+
+            Quaternion rotation = Quaternion.LookRotation(shotDirection);
+            projectile.transform.rotation = rotation;
+
+            AudioSource audioSource = projectile.AddComponent<AudioSource>();
+            if (shootingAudio != null)
+            {
+                shootingAudio.Play();
+            }
+
+            Rigidbody rb = projectile.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                rb.AddForce(shotDirection * shotForce, ForceMode.Impulse);
+            }
+
+            StartCoroutine(DestroyProjectileAfterDelay(projectile, 5f));
         }
-
-
-        Rigidbody rb = projectile.GetComponent<Rigidbody>();
-        if (rb != null)
+        else
         {
-            rb.AddForce(shotDirection * shotForce, ForceMode.Impulse);
+            // Puedes agregar un mensaje de depuración o lógica adicional si el disparo está en cooldown
+            Debug.Log("Espera el cooldown antes de disparar nuevamente.");
         }
-
-        // Invoca una función que destruirá el objeto disparado después de 5 segundos.
-        StartCoroutine(DestroyProjectileAfterDelay(projectile, 5f));
     }
 
     private IEnumerator DestroyProjectileAfterDelay(GameObject projectile, float delay)

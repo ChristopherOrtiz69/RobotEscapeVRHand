@@ -41,7 +41,7 @@ public class ActivateVFXBullet : MonoBehaviour
     {
         while (isVFXActive)
         {
-            if (vfx != null && ObtenerEstadoVFX() == 0)
+            if (vfx != null )
             {
                 vfx.Play(); // Intenta iniciar el sistema si no está reproduciéndose
             }
@@ -50,8 +50,5 @@ public class ActivateVFXBullet : MonoBehaviour
     }
 
     // Función para obtener el estado de reproducción del VFX
-    private float ObtenerEstadoVFX()
-    {
-        return vfx.GetFloat("YourLoopingParameter"); // Reemplaza "YourLoopingParameter" con el nombre de tu parámetro
-    }
+   
 }

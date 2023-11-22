@@ -8,8 +8,8 @@ public class MissileSpawner : MonoBehaviour
     public float playerDetectionRadius = 10f; // Radio de detección del jugador
     public string playerTag = "Player"; // Tag del jugador
 
-    private float minSpawnInterval = 1f; // Tiempo mínimo de spawn (en segundos)
-    private float maxSpawnInterval = 5f; // Tiempo máximo de spawn (en segundos)
+    private float minSpawnInterval = 0f; // Tiempo mínimo de spawn (en segundos)
+    private float maxSpawnInterval = 3f; // Tiempo máximo de spawn (en segundos)
 
     private void Start()
     {
@@ -35,7 +35,7 @@ public class MissileSpawner : MonoBehaviour
             newMissile.SetActive(false); // Desactiva el objeto recién instanciado
 
             // Activa el objeto después de un tiempo aleatorio
-            float activationDelay = Random.Range(1f, 5f); // Tiempo aleatorio para activar
+            float activationDelay = Random.Range(0f, 0f); // Tiempo aleatorio para activar
             StartCoroutine(ActivateMissileAfterDelay(newMissile, activationDelay));
         }
     }
